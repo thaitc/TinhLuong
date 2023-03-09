@@ -3,137 +3,268 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-@section Scripts{
-        <script>
-            $(document).ready(function () {
-                //SAVE
-                $("#btn-gross").on("click", function () {
-                    var formData = new FormData();
-                        formData.append("thuNhap", $("#thuNhap").val());
-                        if(document.getElementById('luongchinh').checked) {
-                            formData.append("luongDongBaoHiem", $("#thuNhap").val());
-                        }else if(document.getElementById('luongkhac').checked) {
-                             formData.append("luongDongBaoHiem", $("#luongDongBaoHiem").val());
-                        }
-                        //
-                                var radios = document.getElementsByName('vung');
-
-                            for (var i = 0, length = radios.length; i < length; i++) {
-                              if (radios[i].checked) {
-                                        formData.append("vung", radios[i].value);
-                                break;
-                              }
-                            }
-                        //
-                                formData.append("soNguoiPhuThuoc", $("#soNguoiPhuThuoc").val());
-                    $.ajax({
-                        type: 'POST',
-                        url: '@Url.Action("GrossToNet", "TinhLuong")',
-                        contentType: false,
-                        processData: false,
-                        cache: false,
-                        data: formData,
-                        success: function (response) {
-                            if (response.responseCode == 0) {
-                                var student = JSON.parse(response.responseMessage);
-                                $("#email").val(student.SalaryGross);
-                                $("input[class='luongGross']").val(student.SalaryGross);
-
-                            }
-                            else {
-                                bootbox.alert(response.ResponseMessage);
-                            }
-                        },
-                        error: errorCallback
-                    });
-                });
-                function resetForm() {
-                    $("#hdn-student-id").val("");
-                    $("#tienLuong").val("");
-                    $("#luongGross").val("");
-                }
-                function successCallback(response) {
-                    debugger;
-                    if (response.responseCode == 0) {
-                        resetForm();
-                        bootbox.alert(response.responseMessage, function () {
-
-                            //PERFORM REMAINING LOGIC
-                        });
-                    }
-                    else {
-                        bootbox.alert(response.ResponseMessage);
-                    }
-                };
-                function errorCallback() {
-                    bootbox.alert("Something went wrong please contact admin.");
-                }
-            });
-        </script>
+<script type="text/javascript" src="/js/simple.money.format.js"></script>
+<style>
+    label {
+        font-weight: bold
     }
-    <div class="text-center">
-        <h1 class="display-4">Tính lương</h1>
-        <hr />
-    </div>
+
+</style>
+<script type="text/javascript">
+    $('.money').simpleMoneyFormat();
+</script>
+@section Scripts{
+    <script>
+        
+        $(document).ready(function () {            
+            $('input:radio[name="dongBH"]').change(function () {
+                $('input[name="luongDongBaoHiem"]').prop("disabled", $(this).val() != 'luongkhac');
+            }).filter(':checked').trigger('change');
+        });
+        $(document).ready(function () {
+            //SAVE
+            $("#btn-gross").on("click", function () {
+                var formData = new FormData();
+                formData.append("thuNhap", $("#thuNhap").val());
+                if (document.getElementById('luongchinh').checked) {
+                    formData.append("luongDongBaoHiem", $("#thuNhap").val());
+                } else if (document.getElementById('luongkhac').checked) {
+                    formData.append("luongDongBaoHiem", $("#luongDongBaoHiem").val());
+                }
+                //
+                var radios = document.getElementsByName('vung');
+
+                for (var i = 0, length = radios.length; i < length; i++) {
+                    if (radios[i].checked) {
+                        formData.append("vung", radios[i].value);
+                        break;
+                    }
+                }
+                //
+                formData.append("soNguoiPhuThuoc", $("#soNguoiPhuThuoc").val());
+                $.ajax({
+                    type: 'POST',
+                    url: '@Url.Action("GrossToNet", "TinhLuong")',
+                    contentType: false,
+                    processData: false,
+                    cache: false,
+                    data: formData,
+                    success: function (response) {
+                        if (response.responseCode == 0) {
+                            var student = response.responseMessage;
+                            document.getElementById("luongNet").innerHTML=student.salaryNet;
+                            document.getElementById("luongGross").innerHTML=student.salaryGross;
+                            document.getElementById("luongNet1").innerHTML=student.salaryNet;
+                            document.getElementById("luongGross1").innerHTML=student.salaryGross;
+                            document.getElementById("bhxh").innerHTML=student.bhxh;
+                            document.getElementById("bhyt").innerHTML=student.bhyt;
+                            document.getElementById("bhtn").innerHTML=student.bhtn;
+                            document.getElementById("thuNhapTruocThue").innerHTML = student.thuNhapTruocThue;
+                            document.getElementById("giamTruGiaCanh").innerHTML = student.giamTruGiaCanh;
+                            document.getElementById("giamTruPhuThuoc").innerHTML=student.giamTruPhuThuoc;
+                            document.getElementById("thuNhapChiuThue").innerHTML = student.thuNhapChiuThue;
+                            document.getElementById("thuNhapCaNhan").innerHTML = student.thueThuNhapCaNhan;
+
+                        }
+                        else {
+                            bootbox.alert(response.ResponseMessage);
+                        }
+                    },
+                    error: errorCallback
+                });
+            });
+            function resetForm() {
+                $("#hdn-student-id").val("");
+                $("#tienLuong").val("");
+                $("#luongGross").val("");
+            }
+            function successCallback(response) {
+                debugger;
+                if (response.responseCode == 0) {
+                    resetForm();
+                    bootbox.alert(response.responseMessage, function () {
+
+                        //PERFORM REMAINING LOGIC
+                    });
+                }
+                else {
+                    bootbox.alert(response.ResponseMessage);
+                }
+            };
+            function errorCallback() {
+                //bootbox.alert("Something went wrong please contact admin.");
+            }
+        });
+    </script>
+    }
+<div class="text-center">
+    <h1 class="display-4">Tính lương</h1>
+    <hr />
+</div>
+<div>
     <div class="row">
         <div class="col-sm-12">
             <form>
                 <div class="row g-3">
                     <div class="col-sm-6">
                         <label for="thunhap" class="form-label">Thu nhập:</label>
-                        <input type="number" class="form-control" id="thuNhap" placeholder="VD: 10,000,000">
-                        <div class="invalid-feedback">
-                            Thu nhập không được rỗng
-                        </div>
+                        <input type="number" required="" class="form-control money" id="thuNhap" placeholder="VD: 10,000,000">
                     </div>
                 </div>
                 <div class="row g-3">
                     <div class="col-sm-6">
-                        <label for="luongdongbaohiem" class="form-label">Mức lương đóng bảo hiểm:</label>
-                        <input type="radio" id="luongchinh" name="dongBH" value="luongchinh" />
+                        <label for="luongdongbaohiem" class="form-label">Mức lương đóng bảo hiểm:</label>&ensp;&ensp;&ensp;&ensp;
+                        <input type="radio" id="luongchinh" name="dongBH" value="luongchinh" checked />
                         <label class="form-label">Trên lương chính thức</label>
-                        </div>
-                        <div class="col-sm-6">
+                    </div>
+                    <div style="text-align:right" class="col-sm-1">
                         <input type="radio" id="luongkhac" name="dongBH" value="luongkhac" />
                         <label class="form-label">Khác:</label>
-
-                        <input type="number" class="form-control" id="luongDongBaoHiem">
-                        <div class="invalid-feedback">
-                            Thu nhập không được rỗng
-                        </div>
+                    </div>
+                    <div class="col-sm-5">
+                        <input type="number" class="form-control money" name="luongDongBaoHiem" value="0" id="luongDongBaoHiem">
                     </div>
                 </div>
                 <div class="row g-3">
                     <div class="col-sm-12">
-                        <label for="vung" class="form-label">Vùng:</label>
-                        <input type="radio" name="vung" id="vung1" value="4680000" />
-                        <label class="form-label">I </label>
-                         <input type="radio" name="vung" id="vung2" value="4160000" />
-                        <label class="form-label">II </label>
-                         <input type="radio" name="vung" id="vung3" value="3640000" />
-                        <label class="form-label">III </label>
-                         <input type="radio" name="vung" id="vung4" value="3250000" />
+                        <label for="vung" class="form-label">Vùng:</label>&ensp;&ensp;&ensp;&ensp;
+                        <input type="radio" name="vung" id="vung1" value="1" required />
+                        <label class="form-label">I </label>&ensp;&ensp;
+                        <input type="radio" name="vung" id="vung2" value="2" />
+                        <label class="form-label">II </label>&ensp;&ensp;
+                        <input type="radio" name="vung" id="vung3" value="3" />
+                        <label class="form-label">III </label>&ensp;&ensp;
+                        <input type="radio" name="vung" id="vung4" value="4" />
                         <label class="form-label">IV </label>
                     </div>
                 </div>
                 <div class="row g-3">
                     <div class="col-sm-6">
                         <label for="songuoiphuthuoc" class="form-label">Số người phụ thuộc:</label>
-                        <input type="text" class="form-control" value="0" id="soNguoiPhuThuoc" placeholder="0">
+                        <input type="text" class="form-control money" value="0" id="soNguoiPhuThuoc" required placeholder="0">
                     </div>
                 </div>
-                <table class="table">
-                    <tbody>
-                        <tr>
-                            <td><a href="javascript:void(0)" class="btn btn-primary" id="btn-gross">GROSS -> NET</a>
-                            <td><a href="javascript:void(0)" class="btn btn-danger" id="btn-net">NET -> GROSS</a>
-                            </td>
-                        </tr>
-                    </tbody>
-
-                </table>
+                <div class="text-center" style="margin-top: 20px">
+                    <a href="javascript:void(0)" class="btn btn-primary" id="btn-gross">GROSS -> NET</a>
+                    <a href="javascript:void(0)" class="btn btn-danger" id="btn-net">NET -> GROSS</a>
+                </div>
             </form>
         </div>
         <br />
     </div>
-    Nè:<p class="luongGross" id="luongGross"></p><input type="email" class="form-control" id="email" placeholder="Enter your email">
+    <div class="row">
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th>Lương Gross</th>
+                    <th>Bảo hiểm</th>
+                    <th>Thuế TNCN</th>
+                    <th>Lương Net</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>
+                        <p id="luongGross"></p>
+                    </td>
+                    <td>
+                        <p id="baoHiem">...</p>
+                    </td>
+                    <td>
+                        <p id="thueTNCN">...</p>
+                    </td>
+                    <td>
+                        <p id="luongNet">...</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <p style="color:blue">Diễn giải chi tiết(VNĐ)</p>
+    <div class="row">
+        <table class="table table-striped">
+            <tbody>
+                <tr>
+                    <td>
+                        <p>Lương Gross</p>
+                    </td>
+                    <td>
+                        <p id="luongGross1">...</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Bảo hiểm xã hội</p>
+                    </td>
+                    <td>
+                        <p id="bhxh">...</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Bảo hiểm y tế</p>
+                    </td>
+                    <td>
+                        <p id="bhyt">...</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Bảo hiểm thất nghiệp</p>
+                    </td>
+                    <td>
+                        <p id="bhtn">...</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Thu nhập trước thuế</p>
+                    </td>
+                    <td>
+                        <p id="thuNhapTruocThue">...</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Giảm trừ gia cảnh bản thân</p>
+                    </td>
+                    <td>
+                        <p id="giamTruGiaCanh">...</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Giảm trừ gia cảnh người phụ thuộc</p>
+                    </td>
+                    <td>
+                        <p id="giamTruPhuThuoc">...</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Thu nhập chịu thuế</p>
+                    </td>
+                    <td>
+                        <p id="thuNhapChiuThue">...</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Thuế thu nhập cá nhân</p>
+                    </td>
+                    <td>
+                        <p id="thuNhapCaNhan">...</p>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <p>Lương Net</p>
+                    </td>
+                    <td>
+                        <p id="luongNet1">...</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

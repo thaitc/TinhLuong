@@ -20,16 +20,19 @@ namespace TinhLuongGrossNet.Controllers
             var formLuongDongBaoHiem = formcollection["luongDongBaoHiem"];
             var formVung = formcollection["vung"];
             var formSoNguoiPhuThuoc = formcollection["soNguoiPhuThuoc"];
-            salary.SalaryNet = formcollection["name"];
 
-            var luongThuNhap = int.Parse(formThuNhap);
-            var luongDongBaoHiem = int.Parse(formLuongDongBaoHiem);
-            var soNguoiPhuThuoc = int.Parse(formSoNguoiPhuThuoc);
-            var bhxh = luongDongBaoHiem * 0.08;
-            var bhyt = luongDongBaoHiem * 0.015;
-            var bhtn = luongDongBaoHiem * 0.01;
+            var luongThuNhap = double.Parse(formThuNhap);
+            var luongDongBaoHiem = double.Parse(formLuongDongBaoHiem);
+            var soNguoiPhuThuoc = double.Parse(formSoNguoiPhuThuoc);
+            var vung = int.Parse(formVung);
+
+            var bhxh = Helper.LuongDongBHXH_BHYTToiDa(luongDongBaoHiem) * ConfigConstant.BHXH;
+            var bhyt = Helper.LuongDongBHXH_BHYTToiDa(luongDongBaoHiem) * ConfigConstant.BHYT;
+            var bhtn = Helper.LuongDongBaoHiemThatNghiepToiDa(vung, luongDongBaoHiem) * ConfigConstant.BHTN;
+
+            var tienBaoHiem = bhxh + bhyt + bhtn;
             //
-            var thuNhapTruocThue = luongThuNhap - bhxh - bhyt - bhtn;
+            var thuNhapTruocThue = luongThuNhap - tienBaoHiem;
             //
             var giaCanhBanThan = ConfigConstant.GiaCanhBanThan;
             //
@@ -43,25 +46,27 @@ namespace TinhLuongGrossNet.Controllers
 
 
 
-            /*salary.BHXH = thuNhap * 0.08;
-            salary.BHYT = formcollection["name"];
-            salary.BHTN = formcollection["name"];
-            salary.TNTT = formcollection["name"];
-            salary.GiamTruGiaCanh = formcollection["name"];
-            salary.GiamTruPhuThuoc = formcollection["name"];
-            salary.ThuNhapChiuThue = formcollection["name"];
-            salary.ThueThuNhapCaNhan = formcollection["name"];*/
+            salary.BHXH = bhxh;
+            salary.BHYT = bhyt;
+            salary.BHTN = bhtn;
+            salary.ThuNhapTruocThue = thuNhapTruocThue;
+            salary.GiamTruGiaCanh = giaCanhBanThan;
+            salary.GiamTruPhuThuoc = giamTruPhuThuoc;
+            salary.ThuNhapChiuThue = thuNhapChiuThue;
+            salary.ThueThuNhapCaNhan = thueThuNhapCaNhan;
+            salary.SalaryNet = net;
+            salary.SalaryGross = luongThuNhap;  
 
             JsonResponseViewModel model = new JsonResponseViewModel();
             if (salary != null)
             {
                 model.ResponseCode = 0;
-                model.ResponseMessage = JsonConvert.SerializeObject(salary);
+                model.ResponseMessage = salary;
             }
             else
             {
                 model.ResponseCode = 1;
-                model.ResponseMessage = "No record available";
+                model.ResponseMessage = null;// "No record available";
             }
             return Json(model);
         }

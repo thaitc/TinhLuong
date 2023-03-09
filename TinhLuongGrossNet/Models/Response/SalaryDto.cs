@@ -2,15 +2,15 @@
 {
     public class SalaryDto
     {
-        public string SalaryGross { get; set; }
-        public string SalaryNet { get; set; }
-        public string BHXH { get; set; }
-        public string BHYT { get; set; }
-        public string BHTN { get; set; }
-        public string TNTT { get; set; }
-        public string GiamTruGiaCanh { get; set; }
-        public string GiamTruPhuThuoc { get; set; }
-        public string ThuNhapChiuThue { get; set; }
-        public string ThueThuNhapCaNhan { get; set; }
+        public double SalaryGross { get; set; }
+        public double SalaryNet { get; set; }
+        public double BHXH { get; set; }
+        public double BHYT { get; set; }
+        public double BHTN { get; set; }
+        public double ThuNhapTruocThue { get; set; }
+        public double GiamTruGiaCanh { get; set; }
+        public double GiamTruPhuThuoc { get; set; }
+        public double ThuNhapChiuThue { get; set; }
+        public double ThueThuNhapCaNhan { get; set; }
     }
 }
