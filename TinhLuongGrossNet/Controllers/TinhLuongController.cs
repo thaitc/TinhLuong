@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TinhLuongGrossNet.Common;
+using TinhLuongGrossNet.Common.Constant;
 using TinhLuongGrossNet.Models.Response;
 
 namespace TinhLuongGrossNet.Controllers
@@ -24,27 +25,19 @@ namespace TinhLuongGrossNet.Controllers
             var luongThuNhap = int.Parse(formThuNhap);
             var luongDongBaoHiem = int.Parse(formLuongDongBaoHiem);
             var soNguoiPhuThuoc = int.Parse(formSoNguoiPhuThuoc);
-
-
-
             var bhxh = luongDongBaoHiem * 0.08;
             var bhyt = luongDongBaoHiem * 0.015;
             var bhtn = luongDongBaoHiem * 0.01;
-
-
-
             //
             var thuNhapTruocThue = luongThuNhap - bhxh - bhyt - bhtn;
             //
-            var giaCanhBanThan = 11000000;
+            var giaCanhBanThan = ConfigConstant.GiaCanhBanThan;
             //
-            var giamTruPhuThuoc = soNguoiPhuThuoc * 4400000;
+            var giamTruPhuThuoc = soNguoiPhuThuoc * ConfigConstant.NguoiPhuThuoc;
             //
             var chiuThue = thuNhapTruocThue - giaCanhBanThan - giamTruPhuThuoc;
             var thuNhapChiuThue = chiuThue < 0 ? 0 : chiuThue;
-
             var thueThuNhapCaNhan = Helper.TienThue(thuNhapChiuThue);
-
             var net = thuNhapTruocThue - thueThuNhapCaNhan;
 
 
