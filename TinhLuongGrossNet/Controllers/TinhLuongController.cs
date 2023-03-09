@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using TinhLuongGrossNet.Common;
+using TinhLuongGrossNet.Common.Constant;
 using TinhLuongGrossNet.Models.Response;
 
 namespace TinhLuongGrossNet.Controllers
@@ -13,62 +14,49 @@ namespace TinhLuongGrossNet.Controllers
         }
         [HttpPost]
         public JsonResult GrossToNet(IFormCollection formcollection)
-        {
-            SalaryDto salary = new SalaryDto();
-            string formThuNhap = formcollection["thuNhap"];
-            var formLuongDongBaoHiem = formcollection["luongDongBaoHiem"];
-            var formVung = formcollection["vung"];
-            var formSoNguoiPhuThuoc = formcollection["soNguoiPhuThuoc"];
-            salary.SalaryNet = formcollection["name"];
+        {          
+            var luongThuNhap = double.Parse(formcollection["thuNhap"]);
+            var luongDongBaoHiem = double.Parse(formcollection["luongDongBaoHiem"]);
+            var soNguoiPhuThuoc = double.Parse(formcollection["soNguoiPhuThuoc"]);
+            var vung = int.Parse(formcollection["vung"]);
 
-            var luongThuNhap = int.Parse(formThuNhap);
-            var luongDongBaoHiem = int.Parse(formLuongDongBaoHiem);
-            var soNguoiPhuThuoc = int.Parse(formSoNguoiPhuThuoc);
+            var bhxh = Helper.LuongDongBHXH_BHYTToiDa(luongDongBaoHiem) * ConfigConstant.BHXH;
+            var bhyt = Helper.LuongDongBHXH_BHYTToiDa(luongDongBaoHiem) * ConfigConstant.BHYT;
+            var bhtn = Helper.LuongDongBaoHiemThatNghiepToiDa(vung, luongDongBaoHiem) * ConfigConstant.BHTN;
+            var tienBaoHiem = bhxh + bhyt + bhtn;
 
+            var thuNhapTruocThue = luongThuNhap - tienBaoHiem;
+            var giaCanhBanThan = ConfigConstant.GiaCanhBanThan;
+            var giamTruPhuThuoc = soNguoiPhuThuoc * ConfigConstant.NguoiPhuThuoc;
 
-
-            var bhxh = luongDongBaoHiem * 0.08;
-            var bhyt = luongDongBaoHiem * 0.015;
-            var bhtn = luongDongBaoHiem * 0.01;
-
-
-
-            //
-            var thuNhapTruocThue = luongThuNhap - bhxh - bhyt - bhtn;
-            //
-            var giaCanhBanThan = 11000000;
-            //
-            var giamTruPhuThuoc = soNguoiPhuThuoc * 4400000;
-            //
             var chiuThue = thuNhapTruocThue - giaCanhBanThan - giamTruPhuThuoc;
             var thuNhapChiuThue = chiuThue < 0 ? 0 : chiuThue;
+            var thueThuNhapCaNhan = Helper.TienThueGross(thuNhapChiuThue);
 
-            var thueThuNhapCaNhan = Helper.TienThue(thuNhapChiuThue);
+            var luongNet = thuNhapTruocThue - thueThuNhapCaNhan;
 
-            var net = thuNhapTruocThue - thueThuNhapCaNhan;
-
-
-
-
-            /*salary.BHXH = thuNhap * 0.08;
-            salary.BHYT = formcollection["name"];
-            salary.BHTN = formcollection["name"];
-            salary.TNTT = formcollection["name"];
-            salary.GiamTruGiaCanh = formcollection["name"];
-            salary.GiamTruPhuThuoc = formcollection["name"];
-            salary.ThuNhapChiuThue = formcollection["name"];
-            salary.ThueThuNhapCaNhan = formcollection["name"];*/
+            SalaryDto salary = new SalaryDto();
+            salary.BHXH = bhxh;
+            salary.BHYT = bhyt;
+            salary.BHTN = bhtn;
+            salary.ThuNhapTruocThue = thuNhapTruocThue;
+            salary.GiamTruGiaCanh = giaCanhBanThan;
+            salary.GiamTruPhuThuoc = giamTruPhuThuoc;
+            salary.ThuNhapChiuThue = thuNhapChiuThue;
+            salary.ThueThuNhapCaNhan = thueThuNhapCaNhan;
+            salary.SalaryNet = luongNet;
+            salary.SalaryGross = luongThuNhap;  
 
             JsonResponseViewModel model = new JsonResponseViewModel();
             if (salary != null)
             {
                 model.ResponseCode = 0;
-                model.ResponseMessage = JsonConvert.SerializeObject(salary);
+                model.ResponseMessage = salary;
             }
             else
             {
                 model.ResponseCode = 1;
-                model.ResponseMessage = "No record available";
+                model.ResponseMessage = null;
             }
             return Json(model);
         }

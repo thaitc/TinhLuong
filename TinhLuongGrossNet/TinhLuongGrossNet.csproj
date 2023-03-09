@@ -11,7 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Common\Enum\" />
+    <Folder Include="Common\Enum\NewFolder\" />
   </ItemGroup>
 
 </Project>
