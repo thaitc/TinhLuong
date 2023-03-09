@@ -14,38 +14,28 @@ namespace TinhLuongGrossNet.Controllers
         }
         [HttpPost]
         public JsonResult GrossToNet(IFormCollection formcollection)
-        {
-            SalaryDto salary = new SalaryDto();
-            string formThuNhap = formcollection["thuNhap"];
-            var formLuongDongBaoHiem = formcollection["luongDongBaoHiem"];
-            var formVung = formcollection["vung"];
-            var formSoNguoiPhuThuoc = formcollection["soNguoiPhuThuoc"];
-
-            var luongThuNhap = double.Parse(formThuNhap);
-            var luongDongBaoHiem = double.Parse(formLuongDongBaoHiem);
-            var soNguoiPhuThuoc = double.Parse(formSoNguoiPhuThuoc);
-            var vung = int.Parse(formVung);
+        {          
+            var luongThuNhap = double.Parse(formcollection["thuNhap"]);
+            var luongDongBaoHiem = double.Parse(formcollection["luongDongBaoHiem"]);
+            var soNguoiPhuThuoc = double.Parse(formcollection["soNguoiPhuThuoc"]);
+            var vung = int.Parse(formcollection["vung"]);
 
             var bhxh = Helper.LuongDongBHXH_BHYTToiDa(luongDongBaoHiem) * ConfigConstant.BHXH;
             var bhyt = Helper.LuongDongBHXH_BHYTToiDa(luongDongBaoHiem) * ConfigConstant.BHYT;
             var bhtn = Helper.LuongDongBaoHiemThatNghiepToiDa(vung, luongDongBaoHiem) * ConfigConstant.BHTN;
-
             var tienBaoHiem = bhxh + bhyt + bhtn;
-            //
+
             var thuNhapTruocThue = luongThuNhap - tienBaoHiem;
-            //
             var giaCanhBanThan = ConfigConstant.GiaCanhBanThan;
-            //
             var giamTruPhuThuoc = soNguoiPhuThuoc * ConfigConstant.NguoiPhuThuoc;
-            //
+
             var chiuThue = thuNhapTruocThue - giaCanhBanThan - giamTruPhuThuoc;
             var thuNhapChiuThue = chiuThue < 0 ? 0 : chiuThue;
-            var thueThuNhapCaNhan = Helper.TienThue(thuNhapChiuThue);
-            var net = thuNhapTruocThue - thueThuNhapCaNhan;
+            var thueThuNhapCaNhan = Helper.TienThueGross(thuNhapChiuThue);
 
+            var luongNet = thuNhapTruocThue - thueThuNhapCaNhan;
 
-
-
+            SalaryDto salary = new SalaryDto();
             salary.BHXH = bhxh;
             salary.BHYT = bhyt;
             salary.BHTN = bhtn;
@@ -54,7 +44,7 @@ namespace TinhLuongGrossNet.Controllers
             salary.GiamTruPhuThuoc = giamTruPhuThuoc;
             salary.ThuNhapChiuThue = thuNhapChiuThue;
             salary.ThueThuNhapCaNhan = thueThuNhapCaNhan;
-            salary.SalaryNet = net;
+            salary.SalaryNet = luongNet;
             salary.SalaryGross = luongThuNhap;  
 
             JsonResponseViewModel model = new JsonResponseViewModel();
@@ -66,7 +56,7 @@ namespace TinhLuongGrossNet.Controllers
             else
             {
                 model.ResponseCode = 1;
-                model.ResponseMessage = null;// "No record available";
+                model.ResponseMessage = null;
             }
             return Json(model);
         }

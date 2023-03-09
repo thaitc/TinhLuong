@@ -35,7 +35,7 @@ namespace TinhLuongGrossNet.Common
             if (so > cuoiKhoang) return cuoiKhoang - dauKhoang;
             return so - dauKhoang;
         }
-        public static double TienThue(double luongChiuThue)
+        public static double TienThueGross(double luongChiuThue)
         {
             var thue1 = 5 * TrongKhoang(luongChiuThue, 0, 5000000) / 100;
             var thue2 = 10 * TrongKhoang(luongChiuThue, 5000000, 10000000) / 100;
