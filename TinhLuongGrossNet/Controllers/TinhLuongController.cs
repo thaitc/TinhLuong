@@ -41,6 +41,7 @@ namespace TinhLuongGrossNet.Controllers
             salary.ThueThuNhapCaNhan = thueThuNhapCaNhan;
             salary.SalaryNet = luongNet;
             salary.SalaryGross = luongThuNhap;
+            salary.TongBaoHiem = tienBaoHiem;
 
             JsonResponseViewModel model = new JsonResponseViewModel();
             if (salary != null)
@@ -85,6 +86,7 @@ namespace TinhLuongGrossNet.Controllers
             salary.ThueThuNhapCaNhan = thueThuNhapCaNhan;
             salary.SalaryNet = luongThuNhap;
             salary.SalaryGross = luongGross;
+            salary.TongBaoHiem = tienBaoHiem;
 
             JsonResponseViewModel model = new JsonResponseViewModel();
             if (salary != null)

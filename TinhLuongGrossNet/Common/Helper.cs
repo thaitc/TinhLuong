@@ -46,6 +46,53 @@ namespace TinhLuongGrossNet.Common
             var thue7 = luongChiuThue > 80000000 ? 35 * (luongChiuThue - 80000000) / 100 : 0;
             return thue1 + thue2 + thue3 + thue4 + thue5 + thue6 + thue7;
         }
+        /*public static List<InsuranceDto> ThueChiTiet(double luongChiuThue)
+        {
+            List<InsuranceDto> insurances = new List<InsuranceDto>();
+            var thue1 = 5 * TrongKhoang(luongChiuThue, 0, 5000000) / 100;
+            InsuranceDto insurance = new InsuranceDto();
+            insurance.ThueSuat = 5;
+            insurance.TienNop = thue1;
+            insurances.Add(insurance);
+            //
+            InsuranceDto insurance2 = new InsuranceDto();
+            var thue2 = 10 * TrongKhoang(luongChiuThue, 5000000, 10000000) / 100;
+            insurance2.ThueSuat = 10;
+            insurance2.TienNop = thue2;
+            insurances.Add(insurance2);
+
+            //
+            InsuranceDto insurance3 = new InsuranceDto();
+            var thue3 = 15 * TrongKhoang(luongChiuThue, 10000000, 18000000) / 100;
+            insurance3.ThueSuat = 15;
+            insurance3.TienNop = thue3;
+            insurances.Add(insurance3);
+
+            InsuranceDto insurance4 = new InsuranceDto();
+            var thue4 = 20 * TrongKhoang(luongChiuThue, 18000000, 32000000) / 100;
+            insurance4.ThueSuat = 20;
+            insurance4.TienNop = thue4;
+            insurances.Add(insurance4);
+
+            InsuranceDto insurance5 = new InsuranceDto();
+            var thue5 = 25 * TrongKhoang(luongChiuThue, 32000000, 52000000) / 100;
+            insurance5.ThueSuat = 25;
+            insurance5.TienNop = thue5;
+            insurances.Add(insurance5);
+
+            InsuranceDto insurance6 = new InsuranceDto();
+            var thue6 = 30 * TrongKhoang(luongChiuThue, 52000000, 80000000) / 100;
+            insurance6.ThueSuat = 30;
+            insurance6.TienNop = thue6;
+            insurances.Add(insurance6);
+
+            InsuranceDto insurance7 = new InsuranceDto();
+            var thue7 = luongChiuThue > 80000000 ? 35 * (luongChiuThue - 80000000) / 100 : 0;
+            insurance7.ThueSuat = 35;
+            insurance7.TienNop = thue7;
+            insurances.Add(insurance7);
+            return insurances;
+        }*/
         public static double ThuNhapChiuThue(double thuNhapDaTruPT)
         {
             bool quyDoi1 = 0 < thuNhapDaTruPT && thuNhapDaTruPT <= 4750000;
