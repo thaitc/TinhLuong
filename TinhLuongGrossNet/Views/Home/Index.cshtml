@@ -73,6 +73,56 @@
                     error: errorCallback
                 });
             });
+                $("#btn-net").on("click", function () {
+                    var formData = new FormData();
+                    formData.append("thuNhap", $("#thuNhap").val());
+                    if (document.getElementById('luongchinh').checked) {
+                        formData.append("luongDongBaoHiem", $("#thuNhap").val());
+                    } else if (document.getElementById('luongkhac').checked) {
+                        formData.append("luongDongBaoHiem", $("#luongDongBaoHiem").val());
+                    }
+                    //
+                    var radios = document.getElementsByName('vung');
+
+                    for (var i = 0, length = radios.length; i < length; i++) {
+                        if (radios[i].checked) {
+                            formData.append("vung", radios[i].value);
+                            break;
+                        }
+                    }
+                    //
+                    formData.append("soNguoiPhuThuoc", $("#soNguoiPhuThuoc").val());
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("NetToGross", "TinhLuong")',
+                        contentType: false,
+                        processData: false,
+                        cache: false,
+                        data: formData,
+                        success: function (response) {
+                            if (response.responseCode == 0) {
+                                var student = response.responseMessage;
+                                document.getElementById("luongNet").innerHTML = student.salaryNet.toLocaleString();
+                                document.getElementById("luongGross").innerHTML = student.salaryGross.toLocaleString();
+                                document.getElementById("luongNet1").innerHTML = student.salaryNet.toLocaleString();
+                                document.getElementById("luongGross1").innerHTML = student.salaryGross.toLocaleString();
+                                document.getElementById("bhxh").innerHTML = student.bhxh.toLocaleString();
+                                document.getElementById("bhyt").innerHTML = student.bhyt.toLocaleString();
+                                document.getElementById("bhtn").innerHTML = student.bhtn.toLocaleString();
+                                document.getElementById("thuNhapTruocThue").innerHTML = student.thuNhapTruocThue.toLocaleString();
+                                document.getElementById("giamTruGiaCanh").innerHTML = student.giamTruGiaCanh.toLocaleString();
+                                document.getElementById("giamTruPhuThuoc").innerHTML = student.giamTruPhuThuoc.toLocaleString();
+                                document.getElementById("thuNhapChiuThue").innerHTML = student.thuNhapChiuThue.toLocaleString();
+                                document.getElementById("thuNhapCaNhan").innerHTML = student.thueThuNhapCaNhan.toLocaleString();
+
+                            }
+                            else {
+                                bootbox.alert(response.ResponseMessage);
+                            }
+                        },
+                        error: errorCallback
+                    });
+                });
             function resetForm() {
                 $("#hdn-student-id").val("");
                 $("#tienLuong").val("");
