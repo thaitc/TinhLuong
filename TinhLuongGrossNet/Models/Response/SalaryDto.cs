@@ -4,6 +4,7 @@
     {
         public double SalaryGross { get; set; }
         public double SalaryNet { get; set; }
+        public double TongBaoHiem { get; set; }
         public double BHXH { get; set; }
         public double BHYT { get; set; }
         public double BHTN { get; set; }

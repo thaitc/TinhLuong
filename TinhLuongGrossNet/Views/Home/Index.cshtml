@@ -3,110 +3,182 @@
 @{
     ViewData["Title"] = "Home Page";
 }
-<script type="text/javascript" src="/js/simple.money.format.js"></script>
-<style>
-    label {
-        font-weight: bold
-    }
-
-</style>
-<script type="text/javascript">
-    $('.money').simpleMoneyFormat();
-</script>
+    <style>
+        label {
+            font-weight: bold
+        }
+    </style>
 @section Scripts{
-    <script>
-
-        $(document).ready(function () {
-            $('input:radio[name="dongBH"]').change(function () {
-                $('input[name="luongDongBaoHiem"]').prop("disabled", $(this).val() != 'luongkhac');
-            }).filter(':checked').trigger('change');
-        });
-        $(document).ready(function () {
-            //SAVE
-            $("#btn-gross").on("click", function () {
-                var formData = new FormData();
-                formData.append("thuNhap", $("#thuNhap").val());
-                if (document.getElementById('luongchinh').checked) {
-                    formData.append("luongDongBaoHiem", $("#thuNhap").val());
-                } else if (document.getElementById('luongkhac').checked) {
-                    formData.append("luongDongBaoHiem", $("#luongDongBaoHiem").val());
+        <script>
+            function validate() {
+                var thuNhap = $('input[id$=thuNhap]').val();
+                var soNguoiPhuThuoc = $('input[id$=soNguoiPhuThuoc]').val();
+                var luongDongBaoHiem = $('input[id$=luongDongBaoHiem]').val();
+                if (thuNhap == '') {
+                    alert('Thu nhập không được trống');
+                    return false;
                 }
-                //
-                var radios = document.getElementsByName('vung');
-
-                for (var i = 0, length = radios.length; i < length; i++) {
-                    if (radios[i].checked) {
-                        formData.append("vung", radios[i].value);
-                        break;
+                if (soNguoiPhuThuoc == '') {
+                    alert('Số người phụ thuộc không được trống');
+                    return false;
+                }
+                if ($("input[id$=luongkhac]").prop("checked")) {
+                    if (luongDongBaoHiem == '') {
+                        alert('Lương đóng bảo hiểm không được trống');
+                        return false;
                     }
                 }
-                //
-                formData.append("soNguoiPhuThuoc", $("#soNguoiPhuThuoc").val());
-                $.ajax({
-                    type: 'POST',
-                    url: '@Url.Action("GrossToNet", "TinhLuong")',
-                    contentType: false,
-                    processData: false,
-                    cache: false,
-                    data: formData,
-                    success: function (response) {
-                        if (response.responseCode == 0) {
-                            var student = response.responseMessage;
-                            document.getElementById("luongNet").innerHTML = student.salaryNet.toLocaleString();
-                            document.getElementById("luongGross").innerHTML = student.salaryGross.toLocaleString();
-                            document.getElementById("luongNet1").innerHTML = student.salaryNet.toLocaleString();
-                            document.getElementById("luongGross1").innerHTML = student.salaryGross.toLocaleString();
-                            document.getElementById("bhxh").innerHTML = student.bhxh.toLocaleString();
-                            document.getElementById("bhyt").innerHTML = student.bhyt.toLocaleString();
-                            document.getElementById("bhtn").innerHTML = student.bhtn.toLocaleString();
-                            document.getElementById("thuNhapTruocThue").innerHTML = student.thuNhapTruocThue.toLocaleString();
-                            document.getElementById("giamTruGiaCanh").innerHTML = student.giamTruGiaCanh.toLocaleString();
-                            document.getElementById("giamTruPhuThuoc").innerHTML = student.giamTruPhuThuoc.toLocaleString();
-                            document.getElementById("thuNhapChiuThue").innerHTML = student.thuNhapChiuThue.toLocaleString();
-                            document.getElementById("thuNhapCaNhan").innerHTML = student.thueThuNhapCaNhan.toLocaleString();
-
-                        }
-                        else {
-                            bootbox.alert(response.ResponseMessage);
-                        }
-                    },
-                    error: errorCallback
-                });
+            }
+            $(document).ready(function () {
+                $('input:radio[name="dongBH"]').change(function () {
+                    $('input[name="luongDongBaoHiem"]').prop("disabled", $(this).val() != 'luongkhac');
+                }).filter(':checked').trigger('change');
             });
-            function resetForm() {
-                $("#hdn-student-id").val("");
-                $("#tienLuong").val("");
-                $("#luongGross").val("");
-            }
-            function successCallback(response) {
-                debugger;
-                if (response.responseCode == 0) {
-                    resetForm();
-                    bootbox.alert(response.responseMessage, function () {
+            $(document).ready(function () {
+                //SAVE
+                $('[id$=btn-gross]').click(function () {
+                    if (validate() == false) {
+                        return;
+                    }
+                    var formData = new FormData();
+                    formData.append("thuNhap", $("#thuNhap").val());
+                    if (document.getElementById('luongchinh').checked) {
+                        formData.append("luongDongBaoHiem", $("#thuNhap").val());
+                    } else if (document.getElementById('luongkhac').checked) {
+                        formData.append("luongDongBaoHiem", $("#luongDongBaoHiem").val());
+                    }
+                    //
+                    var radios = document.getElementsByName('vung');
 
-                        //PERFORM REMAINING LOGIC
+                    for (var i = 0, length = radios.length; i < length; i++) {
+                        if (radios[i].checked) {
+                            formData.append("vung", radios[i].value);
+                            break;
+                        }
+                    }
+                    //
+                    formData.append("soNguoiPhuThuoc", $("#soNguoiPhuThuoc").val());
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("GrossToNet", "TinhLuong")',
+                        contentType: false,
+                        processData: false,
+                        cache: false,
+                        data: formData,
+                        success: function (response) {
+                            if (response.responseCode == 0) {
+                                var student = response.responseMessage;
+                                document.getElementById("luongNet").innerHTML = student.salaryNet.toLocaleString();
+                                document.getElementById("luongGross").innerHTML = student.salaryGross.toLocaleString();
+                                document.getElementById("luongNet1").innerHTML = student.salaryNet.toLocaleString();
+                                document.getElementById("luongGross1").innerHTML = student.salaryGross.toLocaleString();
+                                document.getElementById("bhxh").innerHTML = student.bhxh.toLocaleString();
+                                document.getElementById("bhyt").innerHTML = student.bhyt.toLocaleString();
+                                document.getElementById("bhtn").innerHTML = student.bhtn.toLocaleString();
+                                document.getElementById("thuNhapTruocThue").innerHTML = student.thuNhapTruocThue.toLocaleString();
+                                document.getElementById("giamTruGiaCanh").innerHTML = student.giamTruGiaCanh.toLocaleString();
+                                document.getElementById("giamTruPhuThuoc").innerHTML = student.giamTruPhuThuoc.toLocaleString();
+                                document.getElementById("thuNhapChiuThue").innerHTML = student.thuNhapChiuThue.toLocaleString();
+                                document.getElementById("thuNhapCaNhan").innerHTML = student.thueThuNhapCaNhan.toLocaleString();
+                                document.getElementById("tongBaoHiem").innerHTML = student.tongBaoHiem.toLocaleString();
+                                document.getElementById("thueTNCN").innerHTML = student.thueThuNhapCaNhan.toLocaleString();
+
+                            }
+                            else {
+                                bootbox.alert(response.ResponseMessage);
+                            }
+                        },
+                        error: errorCallback
                     });
+                });
+                $("#btn-net").on("click", function () {
+                    if (validate() == false) {
+                        return;
+                    }
+                    var formData = new FormData();
+                    formData.append("thuNhap", $("#thuNhap").val());
+                    if (document.getElementById('luongchinh').checked) {
+                        formData.append("luongDongBaoHiem", $("#thuNhap").val());
+                    } else if (document.getElementById('luongkhac').checked) {
+                        formData.append("luongDongBaoHiem", $("#luongDongBaoHiem").val());
+                    }
+                    //
+                    var radios = document.getElementsByName('vung');
+
+                    for (var i = 0, length = radios.length; i < length; i++) {
+                        if (radios[i].checked) {
+                            formData.append("vung", radios[i].value);
+                            break;
+                        }
+                    }
+                    //
+                    formData.append("soNguoiPhuThuoc", $("#soNguoiPhuThuoc").val());
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("NetToGross", "TinhLuong")',
+                        contentType: false,
+                        processData: false,
+                        cache: false,
+                        data: formData,
+                        success: function (response) {
+                            if (response.responseCode == 0) {
+                                     var student = response.responseMessage;
+                                    document.getElementById("luongNet").innerHTML = student.salaryNet.toLocaleString();
+                                    document.getElementById("luongGross").innerHTML = student.salaryGross.toLocaleString();
+                                    document.getElementById("luongNet1").innerHTML = student.salaryNet.toLocaleString();
+                                    document.getElementById("luongGross1").innerHTML = student.salaryGross.toLocaleString();
+                                    document.getElementById("bhxh").innerHTML = student.bhxh.toLocaleString();
+                                    document.getElementById("bhyt").innerHTML = student.bhyt.toLocaleString();
+                                    document.getElementById("bhtn").innerHTML = student.bhtn.toLocaleString();
+                                    document.getElementById("thuNhapTruocThue").innerHTML = student.thuNhapTruocThue.toLocaleString();
+                                    document.getElementById("giamTruGiaCanh").innerHTML = student.giamTruGiaCanh.toLocaleString();
+                                    document.getElementById("giamTruPhuThuoc").innerHTML = student.giamTruPhuThuoc.toLocaleString();
+                                    document.getElementById("thuNhapChiuThue").innerHTML = student.thuNhapChiuThue.toLocaleString();
+                                    document.getElementById("thuNhapCaNhan").innerHTML = student.thueThuNhapCaNhan.toLocaleString();
+                                    document.getElementById("tongBaoHiem").innerHTML = student.tongBaoHiem.toLocaleString();
+                                    document.getElementById("thueTNCN").innerHTML = student.thueThuNhapCaNhan.toLocaleString();
+                            }
+                            else {
+                                bootbox.alert(response.ResponseMessage);
+                            }
+                        },
+                        error: errorCallback
+                    });
+                });
+                function resetForm() {
+                    $("#hdn-student-id").val("");
+                    $("#tienLuong").val("");
+                    $("#luongGross").val("");
                 }
-                else {
-                    bootbox.alert(response.ResponseMessage);
+                function successCallback(response) {
+                    debugger;
+                    if (response.responseCode == 0) {
+                        resetForm();
+                        bootbox.alert(response.responseMessage, function () {
+                        });
+                    }
+                    else {
+                        bootbox.alert(response.ResponseMessage);
+                    }
+                };
+                function errorCallback() {
                 }
-            };
-            function errorCallback() {
-                //bootbox.alert("Something went wrong please contact admin.");
-            }
-        });
-    </script>
+            });
+        </script>
     }
-<div class="text-center">
-    <h1 class="display-4">Tính lương</h1>
-    <hr />
-</div>
-<div>
-    <i>
-        Áp dụng mức giảm trừ gia cảnh mới nhất 11 triệu đồng/tháng (132 triệu đồng/năm) với nguời nộp thuế và 4,4 triệu đồng/tháng với mỗi người phụ thuộc (Theo Nghị quyết số 954/2020/UBTVQH14)
-        Áp dụng mức lương tối thiểu vùng mới nhất có hiệu lực từ ngày 01/07/2022 (Theo điều 3, Nghị định 38/2022/NĐ-CP)
-    </i>
-    <div class="row">
+    <h3>Họ tên: Trương Công Thái</h3>
+    <div class="text-center">
+        <h1 class="display-4">Tính lương</h1>      
+        <hr />
+    </div>
+    <div>
+        <i>
+            Áp dụng mức giảm trừ gia cảnh mới nhất 11 triệu đồng/tháng (132 triệu đồng/năm) với nguời nộp thuế và 4,4
+            triệu đồng/tháng với mỗi người phụ thuộc (Theo Nghị quyết số 954/2020/UBTVQH14)
+            Áp dụng mức lương tối thiểu vùng mới nhất có hiệu lực từ ngày 01/07/2022 (Theo điều 3, Nghị định
+            38/2022/NĐ-CP)
+        </i>
+        <div class="row">
             <div class="col-md-12">
                 <label>Áp dụng quy định:</label> Từ 01/07/2022 <a style="color:red">(mới nhất)</a>
             </div>
@@ -119,6 +191,7 @@
             <div class="col-md-3">
                 <label>Người phụ thuộc:</label> 4,400,000đ
             </div>
+        </div>
     </div>
     <br />
     <div class="row">
@@ -127,12 +200,14 @@
                 <div class="row g-3">
                     <div class="col-sm-6">
                         <label for="thunhap" class="form-label">Thu nhập:</label>
-                        <input type="number" required="" class="form-control money" id="thuNhap" placeholder="VD: 10,000,000">
+                        <input type="number" required="" class="form-control money" id="thuNhap"
+                            placeholder="VD: 10,000,000">
                     </div>
                 </div>
                 <div class="row g-3">
                     <div class="col-sm-6">
-                        <label for="luongdongbaohiem" class="form-label">Mức lương đóng bảo hiểm:</label>&ensp;&ensp;&ensp;&ensp;
+                        <label for="luongdongbaohiem" class="form-label">Mức lương đóng bảo
+                            hiểm:</label>&ensp;&ensp;&ensp;&ensp;
                         <input type="radio" id="luongchinh" name="dongBH" value="luongchinh" checked />
                         <label class="form-label">Trên lương chính thức</label>
                     </div>
@@ -141,7 +216,8 @@
                         <label class="form-label">Khác:</label>
                     </div>
                     <div class="col-sm-5">
-                        <input type="number" class="form-control money" name="luongDongBaoHiem" placeholder="VD: 5,000,000" id="luongDongBaoHiem">
+                        <input type="number" class="form-control money" name="luongDongBaoHiem"
+                            placeholder="VD: 5,000,000" id="luongDongBaoHiem">
                     </div>
                 </div>
                 <div class="row g-3">
@@ -149,7 +225,7 @@
                         <label for="vung" class="form-label">
                             Vùng:
                         </label>&ensp;&ensp;&ensp;&ensp;
-                        <input type="radio" name="vung" id="vung1" value="1" required />
+                        <input type="radio" name="vung" id="vung1" value="1" checked />
                         <label class="form-label">I </label>&ensp;&ensp;
                         <input type="radio" name="vung" id="vung2" value="2" />
                         <label class="form-label">II </label>&ensp;&ensp;
@@ -162,11 +238,13 @@
                 <div class="row g-3">
                     <div class="col-sm-6">
                         <label for="songuoiphuthuoc" class="form-label">Số người phụ thuộc:</label>
-                        <input type="text" class="form-control money" value="0" id="soNguoiPhuThuoc" required placeholder="0">
+                        <input type="number" class="form-control money" value="0" id="soNguoiPhuThuoc" required
+                            placeholder="VD: 0 VNĐ">
                     </div>
                 </div>
                 <div class="text-center" style="margin-top: 20px">
-                    <a href="javascript:void(0)" class="btn btn-primary" id="btn-gross">GROSS -> NET</a>
+                    <a href="javascript:void(0)" type="submit" class="btn btn-primary" id="btn-gross">GROSS ->
+                        NET</a>
                     <a href="javascript:void(0)" class="btn btn-danger" id="btn-net">NET -> GROSS</a>
                 </div>
             </form>
@@ -186,13 +264,13 @@
             <tbody>
                 <tr>
                     <td>
-                        <p id="luongGross"></p>
+                        <p id="luongGross">...</p>
                     </td>
                     <td>
-                        <p id="baoHiem">...</p>
+                        <span id="tongBaoHiem">...</span>
                     </td>
                     <td>
-                        <p id="thueTNCN">...</p>
+                        <span id="thueTNCN">...</span>
                     </td>
                     <td>
                         <p id="luongNet">...</p>
@@ -289,96 +367,3 @@
             </tbody>
         </table>
     </div>
-    <br />
-    <i style="color:blue">Chi tiết thuế thu nhập cá nhân(VNĐ)</i>
-    <div class="row">
-        <table class="table table-striped table-bordered">
-            <thead class="thead-gray">
-                <tr>
-                    <th>Mức chịu thuế</th>
-                    <th>Thuế suất</th>
-                    <th>Tiền nộp</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <p>Đến 5 triệu VNĐ</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Trên 5 triệu VNĐ đến 10 triệu VNĐ</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Trên 10 triệu VNĐ đến 18 triệu VNĐ</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Trên 18 triệu VNĐ đến 32 triệu VNĐ</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Trên 32 triệu VNĐ đến 52 triệu VNĐ</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Trên 52 triệu VNĐ đến 80 triệu VNĐ</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        <p>Trên 80 triệu VNĐ	</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                    <td>
-                        <p id="">...</p>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-</div>
