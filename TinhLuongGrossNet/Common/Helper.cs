@@ -142,17 +142,17 @@ namespace TinhLuongGrossNet.Common
         public static double TienBHXH(double luongDongBaoHiem)
         {
             var bhxh = LuongDongBHXH_BHYTToiDa(luongDongBaoHiem) * ConfigConstant.BHXH;
-            return bhxh;
+            return Math.Round(bhxh);
         }
         public static double TienBHYT(double luongDongBaoHiem)
         {
             var bhyt = LuongDongBHXH_BHYTToiDa(luongDongBaoHiem) * ConfigConstant.BHYT;
-            return bhyt;
+            return Math.Round(bhyt);
         }
         public static double TienBHTN(int vung, double luongDongBaoHiem)
         {
             var bhtn = LuongDongBaoHiemThatNghiepToiDa(vung, luongDongBaoHiem) * ConfigConstant.BHTN;
-            return bhtn;
+            return Math.Round(bhtn);
         }
     }
 }
